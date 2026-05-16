@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Le foyer fiscal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Nunito:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:   #0d2b56;
+  --blue:   #1452a3;
+  --sky:    #e8f1fc;
+  --teal:   #0f766e;
+  --amber:  #b45309;
+  --amber-lt: #fef3c7;
+  --green:  #166534;
+  --green-lt: #dcfce7;
+  --red:    #b91c1c;
+  --red-lt: #fee2e2;
+  --text:   #1a1f2e;
+  --muted:  #64748b;
+  --border: #e2e8f0;
+  --bg:     #f5f7fb;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  font-size: 16px;
+}
+
+/* ── BANDEAU ── */
+.bandeau {
+  background: #b91c1c;
+  color: white;
+  text-align: center;
+  padding: 7px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  color: white;
+  padding: 44px 24px 36px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 15% 50%, rgba(20,82,163,.45) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 70% at 85% 30%, rgba(15,118,110,.3) 0%, transparent 70%);
+}
+.hero-tag {
+  display: inline-block;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 30px;
+  padding: 4px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  position: relative;
+}
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(22px, 4vw, 36px);
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 8px;
+  position: relative;
+}
+.hero h1 em { color: #7dd3fc; font-style: normal; }
+.hero-sub {
+  font-size: 14px;
+  opacity: .75;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+}
+.hero-meta {
+  display: inline-flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 16px;
+  position: relative;
+}
+.hero-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ── WRAP ── */
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+/* ── PLAYER CARD ── */
+.player-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(13,43,86,.1);
+  margin-bottom: 26px;
+}
+.player-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.player-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.pbadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--sky);
+  color: var(--blue);
+}
+
+/* ── BARRE DE PROGRESSION ── */
+.progress-wrap { margin-bottom: 22px; }
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.progress-bar {
+  height: 8px;
+  background: var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--teal));
+  border-radius: 8px;
+  width: 0%;
+  transition: width .35s ease;
+}
+
+/* ── CARTE QUESTION ── */
+.question-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(13,43,86,.1);
+  padding: 28px 26px;
+  margin-bottom: 22px;
+}
+.q-number {
+  display: inline-block;
+  background: var(--sky);
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  border-radius: 20px;
+  padding: 4px 12px;
+  margin-bottom: 14px;
+}
+.q-text {
+  font-family: 'Fraunces', serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.q-hint {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--amber);
+  background: var(--amber-lt);
+  display: inline-block;
+  padding: 4px 11px;
+  border-radius: 20px;
+  margin-bottom: 18px;
+}
+
+/* ── OPTIONS (cases à cocher) ── */
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 13px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  font-size: 15px;
+  font-weight: 500;
+}
+.option:hover { border-color: var(--blue); background: var(--sky); }
+.option.selected { border-color: var(--blue); background: var(--sky); }
+.option-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid var(--muted);
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color .15s, background .15s;
+  margin-top: 1px;
+}
+.option.selected .option-check {
+  border-color: var(--blue);
+  background: var(--blue);
+}
+.option.selected .option-check::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: white;
+}
+.option-text { flex: 1; }
+
+/* états de correction */
+.option.locked { cursor: default; }
+.option.locked:hover { border-color: var(--border); background: white; }
+.option.reveal-correct {
+  border-color: var(--green);
+  background: var(--green-lt);
+}
+.option.reveal-correct .option-check {
+  border-color: var(--green);
+  background: var(--green);
+}
+.option.reveal-wrong {
+  border-color: var(--red);
+  background: var(--red-lt);
+}
+.option.reveal-wrong .option-check {
+  border-color: var(--red);
+  background: var(--red);
+}
+.option.reveal-wrong .option-check::after {
+  content: '✕';
+}
+.option-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  white-space: nowrap;
+}
+.option-tag.ok  { background: var(--green); color: white; }
+.option-tag.ko  { background: var(--red); color: white; }
+
+/* ── BOUTONS ── */
+.controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.btn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  padding: 13px 26px;
+  cursor: pointer;
+  transition: transform .1s, box-shadow .15s, background .15s;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary {
+  background: var(--blue);
+  color: white;
+  box-shadow: 0 4px 14px rgba(20,82,163,.3);
+}
+.btn-primary:hover { background: var(--navy); }
+.btn-primary:disabled {
+  background: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.btn-secondary {
+  background: white;
+  color: var(--blue);
+  border: 2px solid var(--border);
+}
+.btn-secondary:hover { border-color: var(--blue); }
+
+/* ── RÉSULTATS ── */
+.result-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(13,43,86,.1);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.result-header {
+  background: var(--navy);
+  color: white;
+  text-align: center;
+  padding: 32px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.result-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 20% 40%, rgba(20,82,163,.5) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 85% 60%, rgba(15,118,110,.35) 0%, transparent 70%);
+}
+.result-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .8;
+  position: relative;
+}
+.result-score {
+  font-family: 'Fraunces', serif;
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 4px 0;
+  position: relative;
+}
+.result-score em { color: #7dd3fc; font-style: normal; }
+.result-note {
+  font-size: 14px;
+  opacity: .85;
+  position: relative;
+}
+.result-message {
+  font-size: 14.5px;
+  line-height: 1.6;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.result-message strong { color: var(--navy); }
+
+/* ── CORRECTION DÉTAILLÉE ── */
+.correction { padding: 20px 24px 26px; }
+.correction-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 14px;
+}
+.recap-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  background: var(--bg);
+}
+.recap-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: white;
+  margin-top: 1px;
+}
+.recap-icon.ok { background: var(--green); }
+.recap-icon.ko { background: var(--red); }
+.recap-body { flex: 1; }
+.recap-q {
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.recap-line { margin-bottom: 3px; }
+.recap-line .lbl {
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.recap-line.bad .lbl  { color: var(--red); }
+.recap-line.good .lbl { color: var(--green); }
+.recap-expl {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+/* ── ALERTE ── */
+.alerte {
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 22px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.alerte.info { background: var(--sky); border-left: 4px solid var(--blue); }
+.alerte.warn { background: var(--amber-lt); border-left: 4px solid var(--amber); }
+.alerte-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.alerte-titre { display: block; font-weight: 700; margin-bottom: 3px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--navy);
+  color: rgba(255,255,255,.75);
+  text-align: center;
+  padding: 32px 20px;
+  font-size: 13px;
+  line-height: 1.9;
+}
+.footer-brand {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: #7dd3fc;
+  margin-bottom: 4px;
+}
+.footer-module { font-weight: 700; color: white; font-size: 14px; margin-bottom: 2px; }
+.footer-sep { width: 40px; height: 2px; background: rgba(255,255,255,.2); margin: 12px auto; border-radius: 2px; }
+.footer-mention { font-size: 11px; opacity: .4; margin-top: 8px; }
+
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="bandeau">Document de travail pédagogique — Ne constitue pas un document officiel</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-tag">Formation · Environnement fiscal du particulier</div>
+  <h1>Quiz — Le <em>foyer fiscal</em></h1>
+  <p class="hero-sub">Cas pratiques sur la composition du foyer fiscal : PACS, mariage, union libre et colocation</p>
+  <div class="hero-meta">
+    <span class="hero-chip">📝 5 questions</span>
+    <span class="hero-chip">☑️ Plusieurs réponses possibles</span>
+    <span class="hero-chip">⏱ ~7 min</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- BLOC VIDÉO -->
+  <div class="player-card">
+    <div class="player-info">
+      <span class="player-title">Le foyer fiscal — Environnement fiscal du particulier</span>
+      <span class="pbadge">🎬 Vidéo de formation</span>
+    </div>
+    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;background:#000;">
+      <iframe
+        src="https://www.youtube.com/embed/9NAeJjfCvY0"
+        style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+        allowfullscreen loading="lazy"
+        title="Le foyer fiscal — Environnement fiscal du particulier"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+      </iframe>
+    </div>
+  </div>
+
+  <!-- BARRE DE PROGRESSION -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-label">
+      <span id="progressText">Question 1 sur 5</span>
+      <span id="progressPct">0 %</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- ZONE QUIZ -->
+  <div id="quizZone"></div>
+
+  <!-- ZONE RÉSULTATS -->
+  <div id="resultZone" class="hidden"></div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">TMK Performances</div>
+  <div class="footer-module">Formation Environnement fiscal du particulier — Quiz d'évaluation</div>
+  <div class="footer-sep"></div>
+  <div>Contenu élaboré à des fins de formation professionnelle.</div>
+  <div class="footer-mention">
+    Document de travail pédagogique — Ne constitue pas un avis juridique.
+  </div>
+</footer>
+
+<script>
+/* ───── DONNÉES DU QUIZ ─────
+   - "correct" : tableau des indices des bonnes réponses (plusieurs possibles)
+   - une réponse est juste si l'ensemble coché == l'ensemble attendu      */
+const questions = [
+  {
+    text: "Madame Sion est veuve depuis 5 ans. Elle a un enfant de 13 ans. Son compagnon actuel a lui aussi un enfant du même âge. Ils ont décidé de se pacser sous le régime de la convention simple la dernière semaine de décembre de cette année. Parmi les affirmations suivantes, laquelle et/ou lesquelles sont incorrecte(s) ?",
+    options: [
+      "Le couple doit remplir une déclaration commune pour les revenus de cette année",
+      "Le couple doit remplir une déclaration individuelle pour les revenus de cette année",
+      "Le couple doit remplir deux déclarations distinctes : une commune et une individuelle pour chacun, pour les revenus de cette année",
+      "Le couple doit remplir une déclaration commune pour les revenus de l'année dernière"
+    ],
+    correct: [1, 2, 3],
+    optExpl: [
+      { ok: true,  txt: "Affirmation correcte (donc à NE PAS cocher). L'année de conclusion du PACS, le couple dépose une déclaration commune portant sur l'ensemble des revenus de l'année." },
+      { ok: false, txt: "Affirmation incorrecte (à cocher). Depuis la réforme de 2011, il n'y a plus de déclaration individuelle pour l'année du PACS : la déclaration est commune." },
+      { ok: false, txt: "Affirmation incorrecte (à cocher). L'option des déclarations multiples (une commune et des déclarations individuelles) a été supprimée par la réforme de 2011 : l'année du PACS, le couple ne dépose qu'une seule déclaration commune." },
+      { ok: false, txt: "Affirmation incorrecte (à cocher). Le PACS ne rétroagit pas : il n'a aucun effet sur les revenus de l'année dernière, qui restent déclarés séparément." }
+    ],
+    explanation: "Le couple se pacse en décembre de cette année. Règle applicable depuis 2011 : l'année du PACS (comme du mariage), le couple dépose une seule déclaration commune couvrant toute l'année des revenus — l'ancienne option des déclarations multiples a été supprimée. Le PACS n'a par ailleurs aucun effet rétroactif sur les revenus de l'année précédente. Seule l'affirmation 1 est donc correcte ; les affirmations 2, 3 et 4 sont incorrectes."
+  },
+  {
+    text: "Dans un logement, plusieurs colocataires ont établi leur résidence principale. Marie, célibataire, vit avec son fils de 5 ans. Julien est pacsé avec Virginie depuis 2 ans : ils ont un enfant ensemble et Julien a un premier enfant en garde partagée. Paul vit en union libre avec Sarah, sans enfant. Enfin, Marc et Valérie ont 2 enfants de 3 et 5 ans et se sont mariés il y a 3 mois. Lors de la précédente déclaration de revenus, combien y avait-il de foyers fiscaux dans la colocation ?",
+    options: [
+      "3 foyers fiscaux",
+      "4 foyers fiscaux",
+      "5 foyers fiscaux",
+      "6 foyers fiscaux"
+    ],
+    correct: [3],
+    optExpl: [
+      { ok: false, txt: "Réponse incorrecte." },
+      { ok: false, txt: "Réponse incorrecte." },
+      { ok: false, txt: "Réponse incorrecte." },
+      { ok: true,  txt: "Bonne réponse : 6 foyers fiscaux." }
+    ],
+    explanation: "Décompte lors de la PRÉCÉDENTE déclaration : Marie et son fils = 1 foyer. Julien et Virginie, pacsés depuis 2 ans, déclarent ensemble (avec leurs enfants à charge) = 1 foyer. Paul et Sarah vivent en union libre : l'union libre ne crée pas de foyer fiscal commun, chacun déclare séparément = 2 foyers. Marc et Valérie se sont mariés il y a seulement 3 mois : lors de la précédente déclaration ils n'étaient pas encore mariés et déclaraient séparément = 2 foyers. Total : 1 + 1 + 2 + 2 = 6 foyers fiscaux."
+  },
+  {
+    text: "Parmi les situations suivantes, laquelle ou lesquelles constituent un foyer fiscal commun, c'est-à-dire une seule déclaration de revenus pour le couple ?",
+    options: [
+      "Un couple marié",
+      "Un couple pacsé",
+      "Un couple vivant en union libre",
+      "Un couple de concubins (concubinage)"
+    ],
+    correct: [0, 1],
+    optExpl: [
+      { ok: true,  txt: "Correct (à cocher). Le mariage crée un foyer fiscal commun : les époux déposent une déclaration de revenus commune." },
+      { ok: true,  txt: "Correct (à cocher). Le PACS crée également un foyer fiscal commun : les partenaires déposent une déclaration commune, au même titre qu'un couple marié." },
+      { ok: false, txt: "Incorrect (à ne pas cocher). L'union libre ne crée aucun lien fiscal : chaque concubin reste un foyer fiscal distinct et déclare séparément." },
+      { ok: false, txt: "Incorrect (à ne pas cocher). Le concubinage est synonyme d'union libre : il ne crée pas de foyer fiscal commun, chaque concubin déclare ses revenus séparément." }
+    ],
+    explanation: "Seuls le mariage et le PACS créent un foyer fiscal commun donnant lieu à une déclaration de revenus unique pour le couple. L'union libre et le concubinage (qui désignent la même situation) ne produisent aucun effet fiscal : chaque membre du couple constitue un foyer fiscal séparé et dépose sa propre déclaration."
+  },
+  {
+    text: "Le prélèvement à la source consiste à payer l'impôt en même temps que les revenus sont perçus. Selon le statut du contribuable, qui collecte cet impôt ? Cochez la ou les affirmations exactes.",
+    options: [
+      "Pour un salarié, l'impôt est collecté par l'employeur",
+      "Pour un retraité, l'impôt est collecté par la caisse de retraite",
+      "Pour un travailleur indépendant, l'impôt correspond à des acomptes prélevés par l'administration fiscale",
+      "Pour un agriculteur, l'impôt est collecté par sa banque"
+    ],
+    correct: [0, 1, 2],
+    optExpl: [
+      { ok: true,  txt: "Correct (à cocher). Pour les salariés, l'employeur prélève l'impôt directement sur le salaire et le reverse à l'administration fiscale." },
+      { ok: true,  txt: "Correct (à cocher). Pour les retraités, c'est la caisse de retraite qui joue le rôle de collecteur du prélèvement à la source." },
+      { ok: true,  txt: "Correct (à cocher). Les travailleurs indépendants n'ont pas de collecteur tiers : l'impôt prend la forme d'acomptes prélevés directement par l'administration fiscale." },
+      { ok: false, txt: "Incorrect (à ne pas cocher). Comme les indépendants, les agriculteurs paient leur impôt sous forme d'acomptes prélevés par l'administration fiscale — pas par leur banque." }
+    ],
+    explanation: "Le prélèvement à la source fait payer l'impôt au moment où le revenu est perçu. Le collecteur dépend du statut : l'employeur pour les salariés, la caisse de retraite pour les retraités. Pour les travailleurs indépendants et les agriculteurs, il n'y a pas de tiers collecteur : l'impôt correspond à des acomptes prélevés directement par l'administration fiscale. L'affirmation 4 est donc la seule incorrecte."
+  },
+  {
+    text: "Dans la colocation, Paul vit en union libre avec Sarah et ils n'ont pas d'enfant. Concernant leur situation fiscale, quelle(s) affirmation(s) est/sont correcte(s) ?",
+    options: [
+      "Paul et Sarah forment deux foyers fiscaux distincts",
+      "Paul et Sarah doivent déposer une déclaration de revenus commune",
+      "Chacun déclare ses revenus de manière séparée",
+      "L'union libre leur permet de choisir entre déclaration commune ou séparée"
+    ],
+    correct: [0, 2],
+    optExpl: [
+      { ok: true,  txt: "Correct (à cocher). L'union libre ne crée pas de lien fiscal : Paul et Sarah constituent bien deux foyers fiscaux distincts." },
+      { ok: false, txt: "Incorrect (à ne pas cocher). La déclaration commune est réservée aux couples mariés ou pacsés. Un couple en union libre ne peut pas déposer de déclaration commune." },
+      { ok: true,  txt: "Correct (à cocher). En union libre, chacun déclare ses propres revenus de façon séparée, dans sa propre déclaration." },
+      { ok: false, txt: "Incorrect (à ne pas cocher). L'union libre n'ouvre aucune option : la déclaration séparée est obligatoire, il n'y a pas de choix possible." }
+    ],
+    explanation: "Paul et Sarah vivent en union libre. Cette situation ne produit aucun effet fiscal : ils forment deux foyers fiscaux distincts et chacun dépose obligatoirement sa propre déclaration de revenus. La déclaration commune est réservée aux couples mariés ou pacsés — l'union libre n'offre aucune option de choix entre commune et séparée."
+  }
+];
+
+/* ───── ÉTAT ───── */
+let current = 0;
+const answers = questions.map(() => []);   // pour chaque question : tableau d'indices cochés
+
+const quizZone     = document.getElementById('quizZone');
+const resultZone   = document.getElementById('resultZone');
+const progressText = document.getElementById('progressText');
+const progressPct  = document.getElementById('progressPct');
+const progressFill = document.getElementById('progressFill');
+
+/* compare deux tableaux d'indices sans tenir compte de l'ordre */
+function sameSet(a, b) {
+  if (a.length !== b.length) return false;
+  const sa = [...a].sort(), sb = [...b].sort();
+  return sa.every((v, i) => v === sb[i]);
+}
+
+/* ───── AFFICHAGE D'UNE QUESTION ───── */
+function renderQuestion(idx) {
+  const q = questions[idx];
+
+  progressText.textContent = `Question ${idx + 1} sur ${questions.length}`;
+  const pct = Math.round(idx / questions.length * 100);
+  progressPct.textContent = pct + ' %';
+  progressFill.style.width = pct + '%';
+
+  const optsHTML = q.options.map((opt, i) => `
+    <div class="option ${answers[idx].includes(i) ? 'selected' : ''}" data-i="${i}">
+      <span class="option-check"></span>
+      <span class="option-text">${opt}</span>
+    </div>
+  `).join('');
+
+  const isLast = idx === questions.length - 1;
+
+  quizZone.innerHTML = `
+    <div class="question-card">
+      <span class="q-number">Question ${idx + 1}</span>
+      <div class="q-text">${q.text}</div>
+      <div class="q-hint">☑️ Plusieurs réponses possibles — cochez toutes les bonnes</div>
+      <div id="optionsBox">${optsHTML}</div>
+    </div>
+    <div class="controls">
+      <button class="btn btn-secondary" id="prevBtn" ${idx === 0 ? 'style="visibility:hidden"' : ''}>← Précédent</button>
+      <button class="btn btn-primary" id="nextBtn" ${answers[idx].length === 0 ? 'disabled' : ''}>
+        ${isLast ? 'Valider mes réponses' : 'Question suivante →'}
+      </button>
+    </div>
+  `;
+
+  /* cocher / décocher une case */
+  quizZone.querySelectorAll('.option').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = parseInt(el.dataset.i, 10);
+      const pos = answers[idx].indexOf(i);
+      if (pos === -1) {
+        answers[idx].push(i);
+        el.classList.add('selected');
+      } else {
+        answers[idx].splice(pos, 1);
+        el.classList.remove('selected');
+      }
+      document.getElementById('nextBtn').disabled = answers[idx].length === 0;
+    });
+  });
+
+  /* navigation */
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    if (answers[idx].length === 0) return;
+    if (isLast) {
+      showResults();
+    } else {
+      current++;
+      renderQuestion(current);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+
+  const prevBtn = document.getElementById('prevBtn');
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      current--;
+      renderQuestion(current);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+}
+
+/* ───── AFFICHAGE DES RÉSULTATS ───── */
+function showResults() {
+  let score = 0;
+  questions.forEach((q, i) => { if (sameSet(answers[i], q.correct)) score++; });
+  const total = questions.length;
+  const note20 = Math.round(score / total * 20 * 10) / 10;
+  const pct = Math.round(score / total * 100);
+
+  let message;
+  if (score === total) {
+    message = "<strong>Parfait !</strong> Les deux cas pratiques sont maîtrisés. Vous savez identifier précisément la composition d'un foyer fiscal selon la situation matrimoniale.";
+  } else if (score === total - 1) {
+    message = "<strong>Presque parfait.</strong> Un cas vous a échappé — consultez la correction détaillée ci-dessous pour comprendre le raisonnement attendu.";
+  } else {
+    message = "<strong>À revoir ensemble.</strong> Les règles de composition du foyer fiscal méritent d'être consolidées. Reprenez la correction détaillée ci-dessous, puis la vidéo associée.";
+  }
+
+  progressText.textContent = "Quiz terminé";
+  progressPct.textContent = "100 %";
+  progressFill.style.width = "100%";
+
+  /* récapitulatif détaillé */
+  const recapHTML = questions.map((q, i) => {
+    const userSet = answers[i];
+    const isOk = sameSet(userSet, q.correct);
+
+    /* liste des options avec leur statut */
+    const optsLines = q.options.map((opt, oi) => {
+      const expected = q.correct.includes(oi);
+      const chosen   = userSet.includes(oi);
+      let cls = 'option locked';
+      let tag = '';
+      if (expected) {
+        cls += ' reveal-correct';
+        tag = '<span class="option-tag ok">Bonne réponse</span>';
+      } else if (chosen && !expected) {
+        cls += ' reveal-wrong';
+        tag = '<span class="option-tag ko">Votre choix — faux</span>';
+      }
+      const checkSel = chosen ? 'selected' : '';
+      return `
+        <div class="${cls} ${checkSel}">
+          <span class="option-check"></span>
+          <span class="option-text">${opt}</span>
+          ${tag}
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="recap-item">
+        <div class="recap-icon ${isOk ? 'ok' : 'ko'}">${isOk ? '✓' : '✕'}</div>
+        <div class="recap-body">
+          <div class="recap-q">Question ${i + 1} — ${q.text}</div>
+          <div style="margin:8px 0;">${optsLines}</div>
+          <div class="recap-expl"><strong>Explication :</strong> ${q.explanation}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  quizZone.classList.add('hidden');
+  resultZone.classList.remove('hidden');
+  resultZone.innerHTML = `
+    <div class="result-card">
+      <div class="result-header">
+        <div class="result-tag">Résultat du quiz</div>
+        <div class="result-score"><em>${score}</em> / ${total}</div>
+        <div class="result-note">Soit ${note20} / 20 &nbsp;•&nbsp; ${pct} % de bonnes réponses</div>
+      </div>
+      <div class="result-message">${message}</div>
+      <div class="correction">
+        <div class="correction-title">📋 Correction détaillée</div>
+        ${recapHTML}
+      </div>
+    </div>
+
+    <div class="alerte warn">
+      <span class="alerte-icon">☑️</span>
+      <div>
+        <span class="alerte-titre">Mode de notation</span>
+        Une question n'est comptée juste que si <strong>toutes</strong> les bonnes réponses sont cochées et <strong>aucune</strong> mauvaise. Les cases en vert ci-dessus indiquent les bonnes réponses ; en rouge, les choix erronés.
+      </div>
+    </div>
+
+    <div class="controls">
+      <span></span>
+      <button class="btn btn-primary" id="restartBtn">↻ Recommencer le quiz</button>
+    </div>
+  `;
+
+  document.getElementById('restartBtn').addEventListener('click', () => location.reload());
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ───── DÉMARRAGE ───── */
+renderQuestion(0);
+</script>
+
+</body>
+</html>
